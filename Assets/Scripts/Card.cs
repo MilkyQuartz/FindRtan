@@ -68,6 +68,7 @@ public class Card : MonoBehaviour
     {
 //어이쿠야
 //아이고야
+//여기 무엇
         anim.SetBool("IsOpen", false);
         front.SetActive(false);
         back.SetActive(true);
