@@ -77,10 +77,10 @@ public class GameManager : MonoBehaviour
         else
         {
             audioSource.PlayOneShot(clip2); // 실패 시 실패 효과음 clip2 재생
-            firstCard.CloseCard();
-            secondCard.CloseCard();
             firstCard.ChangeColor(Color.gray);
             secondCard.ChangeColor(Color.gray);
+            firstCard.CloseCard();
+            secondCard.CloseCard();
             StartCoroutine(FalseTryTime(falseTryTxt, 0.5f)); //0.5f는 투명해지고 비활성화 될때까지의 시간을 보내는 매개변수
             time += 1.0f;
             Debug.Log("맞추기 실패 1초 추가");

@@ -9,7 +9,7 @@ public class Board : MonoBehaviour
 
     void Start()
     {
-        int[] arr = { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7 };
+        int[] arr = { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9 }; 
         arr = arr.OrderBy(x => Random.Range(0f, 7f)).ToArray();
 
         float flyInDuration = 0.1f; // 카드가 화면 안으로 날아오는 시간
@@ -21,16 +21,17 @@ public class Board : MonoBehaviour
     {
         List<Vector2> targetPositions = new List<Vector2>();
 
-        for (int i = 0; i < 16; i++)
+        for (int i = 0; i < 20; i++)
         {
-            float x = (i % 4) * 1.4f - 2.1f;
-            float y = (i / 4) * 1.4f - 3.0f;
+            // 여기서 5로 나눠서 4행 5열이 되는데 4로 나누면 5행 4열이 됩니당.
+            float x = (i % 5) * 1.1f - 2.2f;
+            float y = (i / 5) * 1.1f - 3.0f;
             targetPositions.Add(new Vector2(x, y));
         }
 
         Shuffle(targetPositions); // 목표 위치를 섞음
 
-        for (int i = 0; i < 16; i++)
+        for (int i = 0; i < 20; i++)
         {
             GameObject go = Instantiate(card, this.transform);
 
