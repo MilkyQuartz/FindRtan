@@ -38,7 +38,7 @@ public class Card : MonoBehaviour
         front.SetActive(true);
         back.SetActive(false);
 
-        // 1. firstCard°¡ ºñ¾ú´Ù¸é ³» Á¤º¸¸¦ ³Ñ°ÜÁØ´Ù
+        // 1. firstCardê°€ ë¹„ì—ˆë‹¤ë©´ ë‚´ ì •ë³´ë¥¼ ë„˜ê²¨ì¤€ë‹¤
         if (GameManager.Instance.firstCard == null)
         {
             GameManager.Instance.firstCard = this;
@@ -66,12 +66,13 @@ public class Card : MonoBehaviour
     }
     void CloseCardInvoke()
     {
+//ì–´ì´ì¿ ì•¼
         anim.SetBool("IsOpen", false);
         front.SetActive(false);
         back.SetActive(true);
     }
 
-    // hierarchy¿¡ ÀúÀåµÅ ÀÖ´Â Ä«µå µŞ¸éÀÇ »öÀ» º¯°æÇÏ´Â ÀÛ¾÷
+    // hierarchyì— ì €ì¥ë¼ ìˆëŠ” ì¹´ë“œ ë’·ë©´ì˜ ìƒ‰ì„ ë³€ê²½í•˜ëŠ” ì‘ì—…
     public void ChangeColor(Color color)
     {
         back.GetComponent<SpriteRenderer>().color = color;
