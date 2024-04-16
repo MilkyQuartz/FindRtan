@@ -67,6 +67,8 @@ public class Card : MonoBehaviour
     void CloseCardInvoke()
     {
 //어이쿠야
+
+//아이고 넘어졌네
         anim.SetBool("IsOpen", false);
         front.SetActive(false);
         back.SetActive(true);
