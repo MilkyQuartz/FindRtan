@@ -8,12 +8,16 @@ public class AudioManager : MonoBehaviour
     AudioSource audioSource;
     public AudioClip clip;
 
+    public int stageNum=0;
+    public GameObject stageNumObject;
+
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(stageNumObject);
         }
         else
         {
