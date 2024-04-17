@@ -73,12 +73,12 @@ public class Card : MonoBehaviour
     }
     void CloseCardInvoke()
     {          
-        anim.SetBool("IsOpen", true);        
+        anim.SetBool("IsOpen", true);
     }
     void SingleFlip() // 카드닫기함수(3초뒤 발동)
     {   
         if(isFliped==true){  // 1장 오픈상태
-            anim.SetBool("IsOpen", true); //카드플립
+            anim.SetBool("IsOpen", true); //카드뒤집기 에니동작
             GameManager.Instance.firstCard = null; //자리비움
         }
     }
@@ -89,13 +89,13 @@ public class Card : MonoBehaviour
         back.GetComponent<SpriteRenderer>().color = color;
     }
 
-    public void ChangeCard() //애니메이샨으로 호출됨
+    public void ChangeCard() //애니메이션으로 호출됨
     {
-        if(!front.activeSelf){ //뒤면이면
+        if(!front.activeSelf){ //뒷면 이면
             front.SetActive(true); 
             back.SetActive(false);                              
         }
-        else //앞면이면
+        else //앞면 이면
         {            
             front.SetActive(false);
             back.SetActive(true); 

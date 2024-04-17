@@ -2,17 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.UI;
 
 public class Board : MonoBehaviour
 {
     public GameObject card;
+    public Text levelTxt;
+
+    int level=4; //ê²Œì„ ë‚œì´ë„ [0,1,2,3,4 ë¡œ ì˜ˆì •][ìŠ¤ì½”ì–´ì— ë”°ë¥¸]
+
+    List<int> intList; //ë°°ì—´í¬ê¸°ê°€ í™•ì •ë˜ì§€ì•Šì„ë•Œ ì‚¬ìš©
 
     void Start()
     {
-        int[] arr = { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9 }; 
-        arr = arr.OrderBy(x => Random.Range(0f, 7f)).ToArray();
+        Level(level); 
+        levelTxt.text= level.ToString();
+        float size=1f-(level*0.1f); // ë‚œì´ë„ì— ë”°ë¥¸ ì¹´ë“œí¬ê¸°
+        int[] arr=intList.ToArray(); //ë¦¬ìŠ¤íŠ¸ë¥¼ ë°°ì—´ë¡œ ë³€ê²½
+        
+        //int[] arr = { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9 }; 
+        //arr = arr.OrderBy(x => Random.Range(0f, 7f)).ToArray();
 
-        float flyInDuration = 0.1f; // Ä«µå°¡ È­¸é ¾ÈÀ¸·Î ³¯¾Æ¿À´Â ½Ã°£
+        float flyInDuration = 0.03f; // ì¹´ë“œê°€ í™”ë©´ ì•ˆìœ¼ë¡œ ë‚ ì•„ì˜¤ëŠ” ì‹œê°„
 
         StartCoroutine(CardAnimation(arr, flyInDuration));
     }
@@ -21,23 +32,23 @@ public class Board : MonoBehaviour
     {
         List<Vector2> targetPositions = new List<Vector2>();
 
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < arr.Length; i++)
         {
-            // ¿©±â¼­ 5·Î ³ª´²¼­ 4Çà 5¿­ÀÌ µÇ´Âµ¥ 4·Î ³ª´©¸é 5Çà 4¿­ÀÌ µË´Ï´ç.
+            // ì—¬ê¸°ì„œ 5ë¡œ ë‚˜ëˆ ì„œ 4í–‰ 5ì—´ì´ ë˜ëŠ”ë° 4ë¡œ ë‚˜ëˆ„ë©´ 5í–‰ 4ì—´ì´ ë©ë‹ˆë‹¹.
             float x = (i % 5) * 1.1f - 2.2f;
             float y = (i / 5) * 1.1f - 3.0f;
             targetPositions.Add(new Vector2(x, y));
         }
 
-        Shuffle(targetPositions); // ¸ñÇ¥ À§Ä¡¸¦ ¼¯À½
+        Shuffle(targetPositions); // ëª©í‘œ ìœ„ì¹˜ë¥¼ ì„ìŒ
 
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < arr.Length; i++)
         {
             GameObject go = Instantiate(card, this.transform);
 
-            Vector2 targetPos = targetPositions[i]; // ¹«ÀÛÀ§ ¸ñÇ¥ À§Ä¡
+            Vector2 targetPos = targetPositions[i]; // ë¬´ì‘ìœ„ ëª©í‘œ ìœ„ì¹˜
 
-            // Ä«µå°¡ È­¸é ¹Û¿¡¼­ ½ÃÀÛÇÏ°í ¸ñÇ¥ À§Ä¡·Î ³¯¾Æ¿À´Â ¾Ö´Ï¸ŞÀÌ¼Ç(ÀÌ°Ç Àß ¸ô¶ó¼­ °øºÎ ÇÊ¿äÇÔ)
+            // ì¹´ë“œê°€ í™”ë©´ ë°–ì—ì„œ ì‹œì‘í•˜ê³  ëª©í‘œ ìœ„ì¹˜ë¡œ ë‚ ì•„ì˜¤ëŠ” ì• ë‹ˆë©”ì´ì…˜(ì´ê±´ ì˜ ëª°ë¼ì„œ ê³µë¶€ í•„ìš”í•¨)
             float elapsedTime = 0f;
             while (elapsedTime < flyInDuration)
             {
@@ -52,7 +63,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    // ¼¯´Â ÇÔ¼ö
+    // ì„ëŠ” í•¨ìˆ˜
     void Shuffle<T>(List<T> list)
     {
         int n = list.Count;
@@ -64,5 +75,26 @@ public class Board : MonoBehaviour
             list[i] = list[randomIndex];
             list[randomIndex] = temp;
         }
+    }
+
+    public void Level(int num){    
+
+        int arrLength=6+num; // 6+level 4 = 10
+        
+        int[] arr1= new int[arrLength];
+        int[] arr2= new int[arrLength]; 
+        for(int j=0;j<arrLength;j++){
+            arr1[j]=j; // arr1[10]={0,1,2,3,4,5,6,7,8,9} 
+            //Debug.Log(arr1[j]);           
+            arr2[j]=j; // arr2[10]={0,1,2,3,4,5,6,7,8,9}          
+        }
+        
+        int[] arrBack= arr1.Concat(arr2).ToArray();// arrBack = arr1 + arr2
+        //arrBack[20]={0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9}
+        arrBack = arrBack.OrderBy(x => Random.Range(0f, 1f)).ToArray();// //ë°°ì—´ ì˜¤ë¦„ì°¨ìˆ˜ ëœë¤ì •ë ¬ 
+       
+        // for(int j=0;j<arrBack.Length;j++) Debug.Log(arrBack[j]);       
+          
+        intList=arrBack.ToList(); //ë°°ì—´ì„ ë¦¬ìŠ¤íŠ¸ë¡œ ë§Œë“¬
     }
 }
