@@ -1,4 +1,4 @@
-using System.Collections;
+    using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,7 +25,15 @@ public class AudioManager : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         audioSource.clip = this.clip;
+    }
+    // 시작때 배경음악 출력해주는 메서드
+    public void StartMusic()
+    {
         audioSource.Play();
     }
-
+    // 기존 배경음악을 멈추게하는 메서드
+    public void StopMusic()
+    {
+        audioSource.Stop();
+    }
 }

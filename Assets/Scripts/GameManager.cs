@@ -6,10 +6,11 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance; 
+    public static GameManager instance; 
     public Card firstCard;
     public Card secondCard;
     public Text timeTxt;
+    private RectTransform timeRect;
     public GameObject endTxt;
     AudioSource audioSource;
     Text endText; //endText 컴포넌트를 받을 변수
@@ -17,18 +18,20 @@ public class GameManager : MonoBehaviour
     public Text falseTryTxt; // 시간 추가 텍스트 변수
     public AudioClip clip; //성공
     public AudioClip clip2; //실패
+    public AudioClip clip3; // 20초 이후 배경음악
     float time = 0.0f;
     public int cardCount = 0;
     public int tryCount = 0;  // 매칭 시도 카운트
     public Card thirdCard;
     public Card fourthCard;
+    bool isPlay = true;
 
 
     private void Awake()
     {
-        if (Instance == null)
+        if (instance == null)
         {
-            Instance = this;
+            instance = this;
         }
     }
 
@@ -39,6 +42,7 @@ public class GameManager : MonoBehaviour
         // endText 컴포넌트 불러옴
         endText = endTxt.GetComponent<Text>();
         falseTryTxt = falseTryTxt.GetComponent<Text>();
+        timeRect = timeTxt.GetComponent<RectTransform>();
         tryCount = 0;  // 게임시작,재시작시 카운트 초기화
     }
 
@@ -52,6 +56,27 @@ public class GameManager : MonoBehaviour
             // endTxt의 기본을 실패로 설정하고 매칭 실패시 실패가 나오게 한다.
             endTxt.SetActive(true);
             Time.timeScale = 0.0f;
+            audioSource.Stop();
+        }
+        if (time >= 20.0f)
+        {
+            // 색상변경
+            timeTxt.color = Color.red;
+            // 폰트 사이즈 1 -> 1.1 사이즈로 변경
+            timeTxt.fontSize = (int)(70 * 1.2f);
+            // 이건 설명 들었는데 모르겠어요..
+            timeRect.sizeDelta = new Vector2(timeTxt.preferredWidth, timeTxt.preferredHeight);
+            //timeTxt.transform.localScale = Vector3.one * 1.1f;
+        }
+        // 20초에 배경음악 바뀌는 부분
+        if (time >= 20.0f && isPlay)
+        {
+            // 기존 배경음악 정지
+            AudioManager.instance.StopMusic();
+            // 20초 이후 새로운 배경음악 출력
+            audioSource.clip = clip3;
+            audioSource.Play();
+            isPlay = false;
         }
     }
 
