@@ -9,15 +9,15 @@ public class Board : MonoBehaviour
     public GameObject card;
     public Text levelTxt;
 
-    int level=4; //게임 난이도 [0,1,2,3,4 로 예정][스코어에 따른]
+    int level=2; //게임 난이도 [0,1,2,3,4 로 예정][스코어에 따른]
 
     List<int> intList; //배열크기가 확정되지않을때 사용
 
     void Start()
     {
         Level(level); 
-        levelTxt.text= level.ToString();
-        float size=1f-(level*0.1f); // 난이도에 따른 카드크기
+        levelTxt.text= level.ToString(); //난이도 텍스트 연결 
+        //float size=1f-(level*0.1f); // 난이도에 따른 카드크기
         int[] arr=intList.ToArray(); //리스트를 배열로 변경
         
         //int[] arr = { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9 }; 
@@ -32,7 +32,7 @@ public class Board : MonoBehaviour
     {
         List<Vector2> targetPositions = new List<Vector2>();
 
-        for (int i = 0; i < arr.Length; i++)
+        for (int i = 0; i < arr.Length; i++) //20 >>arr.Length 대체
         {
             // 여기서 5로 나눠서 4행 5열이 되는데 4로 나누면 5행 4열이 됩니당.
             float x = (i % 5) * 1.1f - 2.2f;
@@ -42,7 +42,7 @@ public class Board : MonoBehaviour
 
         Shuffle(targetPositions); // 목표 위치를 섞음
 
-        for (int i = 0; i < arr.Length; i++)
+        for (int i = 0; i < arr.Length; i++) //20 >>arr.Length 대체
         {
             GameObject go = Instantiate(card, this.transform);
 
