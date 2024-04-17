@@ -9,14 +9,22 @@ public class Board : MonoBehaviour
     public GameObject card;
     public Text levelTxt;
 
-    int level=2; //게임 난이도 [0,1,2,3,4 로 예정][스코어에 따른]
+    GameObject audioManager;
+
+    int level=0; //게임 난이도 [0,1,2,3,4 로 예정][스코어에 따른]
+    int nowStage; //스타트씬에서 받아올 변수
 
     List<int> intList; //배열크기가 확정되지않을때 사용
 
     void Start()
     {
-        Level(level); 
+        audioManager = GameObject.Find("AudioManager"); //스타트씬에서 넘어온 오디오매니저 찾기
+        nowStage = audioManager.GetComponent<AudioManager>().stageNum; //오디오매니저 따라 들어온 난이도값
+        //Debug.Log(nowStage);
+        level=nowStage+1; //텍스트 표시용 [ level =난이도값0 +1]
         levelTxt.text= level.ToString(); //난이도 텍스트 연결 
+
+        Level(nowStage);         
         //float size=1f-(level*0.1f); // 난이도에 따른 카드크기
         int[] arr=intList.ToArray(); //리스트를 배열로 변경
         
