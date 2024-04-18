@@ -8,16 +8,14 @@ public class AudioManager : MonoBehaviour
     AudioSource audioSource;
     public AudioClip clip;
 
-    public int stageNum=0;
-    public GameObject stageNumObject;
+    public int stageNum=0;  //스타트씬에서 난이도 값 넘어올곳
 
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
-            DontDestroyOnLoad(stageNumObject);
+            DontDestroyOnLoad(gameObject);            
         }
         else
         {

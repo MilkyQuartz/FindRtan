@@ -53,7 +53,6 @@ public class Board : MonoBehaviour
         for (int i = 0; i < arr.Length; i++) //20 >>arr.Length 대체
         {
             GameObject go = Instantiate(card, this.transform);
-
             Vector2 targetPos = targetPositions[i]; // 무작위 목표 위치
 
             // 카드가 화면 밖에서 시작하고 목표 위치로 날아오는 애니메이션(이건 잘 몰라서 공부 필요함)
@@ -65,10 +64,10 @@ public class Board : MonoBehaviour
                 go.transform.position = Vector2.Lerp(targetPos + new Vector2(Random.Range(-200f, 200f), Random.Range(-300f, 300f)), targetPos, t);
                 yield return null;
             }
-
             go.SetActive(true);
             go.GetComponent<Card>().Setting(arr[i]);
         }
+        GameManager.instance.cardCount=arr.Length;
     }
 
     // 섞는 함수

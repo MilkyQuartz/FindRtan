@@ -13,15 +13,16 @@ public class GameManager : MonoBehaviour
     private RectTransform timeRect;
     public GameObject endTxt;
     AudioSource audioSource;
-    Text endText; //endText ÄÄÆ÷³ÍÆ®¸¦ ¹ŞÀ» º¯¼ö
-    public Text tryTxt;  // Ä«¿îÆ®Ç¥±âÇÒ ÅØ½ºÆ® ¿¬°áºÎ
-    public Text falseTryTxt; // ½Ã°£ Ãß°¡ ÅØ½ºÆ® º¯¼ö
-    public AudioClip clip; //¼º°ø
-    public AudioClip clip2; //½ÇÆĞ
-    public AudioClip clip3; // 20ÃÊ ÀÌÈÄ ¹è°æÀ½¾Ç
-    float time = 0.0f;
+    Text endText; //endText ì»´í¬ë„ŒíŠ¸ë¥¼ ë°›ì„ ë³€ìˆ˜
+    public Text tryTxt;  // ì¹´ìš´íŠ¸í‘œê¸°í•  í…ìŠ¤íŠ¸ ì—°ê²°ë¶€
+    public Text falseTryTxt; // ì‹œê°„ ì¶”ê°€ í…ìŠ¤íŠ¸ ë³€ìˆ˜
+    public AudioClip clip; //ì„±ê³µ
+    public AudioClip clip2; //ì‹¤íŒ¨
+    public AudioClip clip3; // 20ì´ˆ ì´í›„ ë°°ê²½ìŒì•…
+    public float time = 0.0f;
+    public int score = 0;
     public int cardCount = 0;
-    public int tryCount = 0;  // ¸ÅÄª ½Ãµµ Ä«¿îÆ®
+    public int tryCount = 0;  // ë§¤ì¹­ ì‹œë„ ì¹´ìš´íŠ¸
     public Card thirdCard;
     public Card fourthCard;
     bool isPlay = true;
@@ -39,41 +40,41 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1.0f;
         audioSource = GetComponent<AudioSource>();
-        // endText ÄÄÆ÷³ÍÆ® ºÒ·¯¿È
+        // endText ì»´í¬ë„ŒíŠ¸ ë¶ˆëŸ¬ì˜´
         endText = endTxt.GetComponent<Text>();
         falseTryTxt = falseTryTxt.GetComponent<Text>();
         timeRect = timeTxt.GetComponent<RectTransform>();
-        tryCount = 0;  // °ÔÀÓ½ÃÀÛ,Àç½ÃÀÛ½Ã Ä«¿îÆ® ÃÊ±âÈ­
+        tryCount = 0;  // ê²Œì„ì‹œì‘,ì¬ì‹œì‘ì‹œ ì¹´ìš´íŠ¸ ì´ˆê¸°í™”
     }
 
     void Update()
     {
         time += Time.deltaTime;
         timeTxt.text = time.ToString("N2");
-        tryTxt.text = tryCount.ToString();  // ¿¬°áµÈ ÅØ½ºÆ®¿¡ Ç¥½Ã
+        tryTxt.text = tryCount.ToString();  // ì—°ê²°ëœ í…ìŠ¤íŠ¸ì— í‘œì‹œ
         if (time >= 30.0f)
         {
-            // endTxtÀÇ ±âº»À» ½ÇÆĞ·Î ¼³Á¤ÇÏ°í ¸ÅÄª ½ÇÆĞ½Ã ½ÇÆĞ°¡ ³ª¿À°Ô ÇÑ´Ù.
+            // endTxtì˜ ê¸°ë³¸ì„ ì‹¤íŒ¨ë¡œ ì„¤ì •í•˜ê³  ë§¤ì¹­ ì‹¤íŒ¨ì‹œ ì‹¤íŒ¨ê°€ ë‚˜ì˜¤ê²Œ í•œë‹¤.
             endTxt.SetActive(true);
             Time.timeScale = 0.0f;
             audioSource.Stop();
         }
         if (time >= 20.0f)
         {
-            // »ö»óº¯°æ
+            // ìƒ‰ìƒë³€ê²½
             timeTxt.color = Color.red;
-            // ÆùÆ® »çÀÌÁî 1 -> 1.1 »çÀÌÁî·Î º¯°æ
+            // í°íŠ¸ ì‚¬ì´ì¦ˆ 1 -> 1.1 ì‚¬ì´ì¦ˆë¡œ ë³€ê²½
             timeTxt.fontSize = (int)(70 * 1.2f);
-            // ÀÌ°Ç ¼³¸í µé¾ú´Âµ¥ ¸ğ¸£°Ú¾î¿ä..
+            // ì´ê±´ ì„¤ëª… ë“¤ì—ˆëŠ”ë° ëª¨ë¥´ê² ì–´ìš”..
             timeRect.sizeDelta = new Vector2(timeTxt.preferredWidth, timeTxt.preferredHeight);
             //timeTxt.transform.localScale = Vector3.one * 1.1f;
         }
-        // 20ÃÊ¿¡ ¹è°æÀ½¾Ç ¹Ù²î´Â ºÎºĞ
+        // 20ì´ˆì— ë°°ê²½ìŒì•… ë°”ë€ŒëŠ” ë¶€ë¶„
         if (time >= 20.0f && isPlay)
         {
-            // ±âÁ¸ ¹è°æÀ½¾Ç Á¤Áö
+            // ê¸°ì¡´ ë°°ê²½ìŒì•… ì •ì§€
             AudioManager.instance.StopMusic();
-            // 20ÃÊ ÀÌÈÄ »õ·Î¿î ¹è°æÀ½¾Ç Ãâ·Â
+            // 20ì´ˆ ì´í›„ ìƒˆë¡œìš´ ë°°ê²½ìŒì•… ì¶œë ¥
             audioSource.clip = clip3;
             audioSource.Play();
             isPlay = false;
@@ -85,60 +86,61 @@ public class GameManager : MonoBehaviour
     {
         if(firstCard.idx == secondCard.idx)
         {
-            audioSource.PlayOneShot(clip); // ¼º°ø ½Ã ¼º°ø È¿°úÀ½
+            audioSource.PlayOneShot(clip); // ì„±ê³µ ì‹œ ì„±ê³µ íš¨ê³¼ìŒ
             firstCard.DestroyCard();
             secondCard.DestroyCard();
             cardCount -= 2;
+            score+=10; // ë§ì¶”ë©´ 10ì 
 
             if(cardCount == 0)
             {
-                //¸ÅÄª ¼º°ø ½Ã, ÆÀ¿øÀÇ ÀÌ¸§ Ç¥½Ã / ½ÇÆĞ ½Ã ½ÇÆĞ Ç¥½Ã (Á¾·á ½Ã ³¡! ³ªÅ¸³ª´Â °ÍÃ³·³)
-                endText.text = "<ÆÀÀå>\nÀ¯¼öÁ¤\n<ÆÀ¿ø>\n¼ÕµÎÇõ\nÀÌÁ¤È£\n¾ÈÁö¼ö\n±ÇÁö¹Î";
-                endText.fontSize = 80;
+                //ë§¤ì¹­ ì„±ê³µ ì‹œ, íŒ€ì›ì˜ ì´ë¦„ í‘œì‹œ / ì‹¤íŒ¨ ì‹œ ì‹¤íŒ¨ í‘œì‹œ (ì¢…ë£Œ ì‹œ ë! ë‚˜íƒ€ë‚˜ëŠ” ê²ƒì²˜ëŸ¼)
+                //endText.text =  "<íŒ€ì¥>\nìœ ìˆ˜ì •\n<íŒ€ì›>\nì†ë‘í˜\nì´ì •í˜¸\nì•ˆì§€ìˆ˜\nê¶Œì§€ë¯¼";
+                //endText.fontSize = 80;
                 endTxt.SetActive(true);
                 Time.timeScale = 0.0f;
             }
         }
         else
         {
-            audioSource.PlayOneShot(clip2); // ½ÇÆĞ ½Ã ½ÇÆĞ È¿°úÀ½ clip2 Àç»ı
+            audioSource.PlayOneShot(clip2); // ì‹¤íŒ¨ ì‹œ ì‹¤íŒ¨ íš¨ê³¼ìŒ clip2 ì¬ìƒ
             firstCard.ChangeColor(Color.gray);
             secondCard.ChangeColor(Color.gray);
             firstCard.CloseCard();
             secondCard.CloseCard();
-            StartCoroutine(FalseTryTime(falseTryTxt, 0.5f)); //0.5f´Â Åõ¸íÇØÁö°í ºñÈ°¼ºÈ­ µÉ¶§±îÁöÀÇ ½Ã°£À» º¸³»´Â ¸Å°³º¯¼ö
+            StartCoroutine(FalseTryTime(falseTryTxt, 0.5f)); //0.5fëŠ” íˆ¬ëª…í•´ì§€ê³  ë¹„í™œì„±í™” ë ë•Œê¹Œì§€ì˜ ì‹œê°„ì„ ë³´ë‚´ëŠ” ë§¤ê°œë³€ìˆ˜
             time += 1.0f;
-            Debug.Log("¸ÂÃß±â ½ÇÆĞ 1ÃÊ Ãß°¡");
+            Debug.Log("í‹€ë ·ìŠµë‹ˆë‹¤");
         }
         if (thirdCard != null && fourthCard != null)
         {
             thirdCard.ChangeColor(Color.white);
             fourthCard.ChangeColor(Color.white);
         }
-        //1,2Card¿¡ ÀúÀåµÈ »öÀ» ¿ø·¡»öÀ¸·Î ¹Ù²Ù°Å³ª ´Ù¸¥»öÀ¸·Î ÀúÀå
+        //1,2Cardì— ì €ì¥ëœ ìƒ‰ì„ ì›ë˜ìƒ‰ìœ¼ë¡œ ë°”ê¾¸ê±°ë‚˜ ë‹¤ë¥¸ìƒ‰ìœ¼ë¡œ ì €ì¥
         thirdCard = firstCard; 
         fourthCard = secondCard;
         firstCard = null;
         secondCard = null;
-        tryCount++;  // ¸ÅÄªÇÔ¼ö ºÒ·¯¿Ã¶§¸¶´Ù Ä«¿îÆ® +1
+        tryCount++;  // ë§¤ì¹­í•¨ìˆ˜ ë¶ˆëŸ¬ì˜¬ë•Œë§ˆë‹¤ ì¹´ìš´íŠ¸ +1
     }
 
-    // ½Ã°£ Ãß°¡ È¿°ú ÇÔ¼ö(Åõ¸íÇØÁö±â)
+    // ì‹œê°„ ì¶”ê°€ íš¨ê³¼ í•¨ìˆ˜(íˆ¬ëª…í•´ì§€ê¸°)
     IEnumerator FalseTryTime(Text text, float fadeTime)
     {
         text.gameObject.SetActive(true);
-        Color originalColor = text.color;  // ÅØ½ºÆ®ÀÇ ÃÊ±â »ö»ó
+        Color originalColor = text.color;  // í…ìŠ¤íŠ¸ì˜ ì´ˆê¸° ìƒ‰ìƒ
 
         float timer = 0f;
         while (timer < fadeTime)
         {
             timer += Time.deltaTime;
-            float alpha = Mathf.Lerp(1f, 0f, timer / fadeTime); // Lerp´Â ¼±Çüº¸°£ ÇÔ¼ö (Áß°£°ªÀ» °è»êÇÏ¿© ºÎµå·¯¿î ÀÌµ¿À» ¸¸µé¾î³¿)
-            text.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha); // r,g,b»ö»óÀº ±âÁ¸ÀÇ »ö»óÀ» ÀÌ¿ëÇÏÁö¸¸ Åõ¸íµµ¸¸ Á¶ÀıÇÏ¿© Á¡Á¡ Åõ¸íÇÏ°Ô ¸¸µç´Ù.
+            float alpha = Mathf.Lerp(1f, 0f, timer / fadeTime); // LerpëŠ” ì„ í˜•ë³´ê°„ í•¨ìˆ˜ (ì¤‘ê°„ê°’ì„ ê³„ì‚°í•˜ì—¬ ë¶€ë“œëŸ¬ìš´ ì´ë™ì„ ë§Œë“¤ì–´ëƒ„)
+            text.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha); // r,g,bìƒ‰ìƒì€ ê¸°ì¡´ì˜ ìƒ‰ìƒì„ ì´ìš©í•˜ì§€ë§Œ íˆ¬ëª…ë„ë§Œ ì¡°ì ˆí•˜ì—¬ ì ì  íˆ¬ëª…í•˜ê²Œ 
             yield return null;
         }
 
-        text.gameObject.SetActive(false); // ¹İº¹¹®ÀÌ ³¡³µÀ¸¸é ºñÈ°¼ºÈ­
+        text.gameObject.SetActive(false); // ë°˜ë³µë¬¸ì´ ëë‚¬ìœ¼ë©´ ë¹„í™œì„±í™”
     }
 
 

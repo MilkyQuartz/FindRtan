@@ -35,22 +35,22 @@ public class Card : MonoBehaviour
 
     public void OpenCard()
     {
-        if (GameManager.Instance.secondCard != null) return;
+        if (GameManager.instance.secondCard != null) return;
 
         audioSource.PlayOneShot(clip);
         anim.SetBool("IsOpen", true); 
 
         // 1. firstCard가 비었다면 내 정보를 넘겨준다
-        if (GameManager.Instance.firstCard == null)
+        if (GameManager.instance.firstCard == null)
         {
-            GameManager.Instance.firstCard = this;
+            GameManager.instance.firstCard = this;
             isFliped=true;
             Invoke("SingleFlip", 3f); //3초후 카드닫기함수
         }
         else
         {
-            GameManager.Instance.secondCard = this;
-            GameManager.Instance.Matched();            
+            GameManager.instance.secondCard = this;
+            GameManager.instance.Matched();
         }
 
     }
@@ -79,7 +79,7 @@ public class Card : MonoBehaviour
     {   
         if(isFliped==true){  // 1장 오픈상태
             anim.SetBool("IsOpen", true); //카드뒤집기 에니동작
-            GameManager.Instance.firstCard = null; //자리비움
+            GameManager.instance.firstCard = null; //자리비움
         }
     }
 
