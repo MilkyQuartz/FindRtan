@@ -8,14 +8,12 @@ public class AudioManager : MonoBehaviour
     AudioSource audioSource;
     public AudioClip clip;
 
-    public int stageNum=0;  //ìŠ¤íƒ€íŠ¸ì”¬ì—ì„œ ë‚œì´ë„ ê°’ ë„˜ì–´ì˜¬ê³³
-
     private void Awake()
     {
         if (instance == null)
         {
-            instance = this;
-            DontDestroyOnLoad(gameObject);            
+            instance = this;        
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -27,6 +25,7 @@ public class AudioManager : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         audioSource.clip = this.clip;
+        StartMusic();
     }
     // ½ÃÀÛ¶§ ¹è°æÀ½¾Ç Ãâ·ÂÇØÁÖ´Â ¸Ş¼­µå
     public void StartMusic()

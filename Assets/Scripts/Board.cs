@@ -1,61 +1,86 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using UnityEngine.UI;
+using System.Linq;
 
 public class Board : MonoBehaviour
 {
     public GameObject card;
-    public Text levelTxt;
-
-    GameObject audioManager;
-
-    int level=0; //ê²Œì„ ë‚œì´ë„ [0,1,2,3,4 ë¡œ ì˜ˆì •][ìŠ¤ì½”ì–´ì— ë”°ë¥¸]
-    int nowStage; //ìŠ¤íƒ€íŠ¸ì”¬ì—ì„œ ë°›ì•„ì˜¬ ë³€ìˆ˜
-
-    List<int> intList; //ë°°ì—´í¬ê¸°ê°€ í™•ì •ë˜ì§€ì•Šì„ë•Œ ì‚¬ìš©
 
     void Start()
     {
-        audioManager = GameObject.Find("AudioManager"); //ìŠ¤íƒ€íŠ¸ì”¬ì—ì„œ ë„˜ì–´ì˜¨ ì˜¤ë””ì˜¤ë§¤ë‹ˆì € ì°¾ê¸°
-        nowStage = audioManager.GetComponent<AudioManager>().stageNum; //ì˜¤ë””ì˜¤ë§¤ë‹ˆì € ë”°ë¼ ë“¤ì–´ì˜¨ ë‚œì´ë„ê°’
-        //Debug.Log(nowStage);
-        level=nowStage+1; //í…ìŠ¤íŠ¸ í‘œì‹œìš© [ level =ë‚œì´ë„ê°’0 +1]
-        levelTxt.text= level.ToString(); //ë‚œì´ë„ í…ìŠ¤íŠ¸ ì—°ê²° 
+        // PlayerPrefs¿¡¼­ ÀúÀåµÈ ³­ÀÌµµ °ªÀ» °¡Á®¿È
+        int difficulty = PlayerPrefs.GetInt("Difficulty", 1);
+        GenerateCards(difficulty);
+    }
 
-        Level(nowStage);         
-        //float size=1f-(level*0.1f); // ë‚œì´ë„ì— ë”°ë¥¸ ì¹´ë“œí¬ê¸°
-        int[] arr=intList.ToArray(); //ë¦¬ìŠ¤íŠ¸ë¥¼ ë°°ì—´ë¡œ ë³€ê²½
-        
-        //int[] arr = { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9 }; 
-        //arr = arr.OrderBy(x => Random.Range(0f, 7f)).ToArray();
+    public void GenerateCards(int difficulty)
+    {
+        int pairCount = 0;
 
-        float flyInDuration = 0.03f; // ì¹´ë“œê°€ í™”ë©´ ì•ˆìœ¼ë¡œ ë‚ ì•„ì˜¤ëŠ” ì‹œê°„
+        // ³­ÀÌµµ¿¡ µû¶ó ¼ıÀÚ ½ÖÀÇ °³¼ö¸¦ °áÁ¤
+        switch (difficulty)
+        {
+            case 1:
+                pairCount = 3;
+                break;
+            case 2:
+                pairCount = 5;
+                break;
+            case 3:
+                pairCount = 7;
+                break;
+            case 4:
+                pairCount = 8;
+                break;
+            case 5:
+                pairCount = 10;
+                break;
+            default:
+                pairCount = 3;
+                break;
+        }
+
+        int[] arr = new int[pairCount * 2];
+
+        // ¼ıÀÚ ½Ö »ı¼º
+        for (int i = 0; i < pairCount; i++)
+        {
+            arr[i * 2] = i;
+            arr[i * 2 + 1] = i;
+        }
+
+        arr = arr.OrderBy(x => Random.Range(0f, 1f)).ToArray(); // ¹è¿­ ¼¯±â
+
+        float flyInDuration = 0.1f; // Ä«µå°¡ È­¸é ¾ÈÀ¸·Î ³¯¾Æ¿À´Â ½Ã°£
 
         StartCoroutine(CardAnimation(arr, flyInDuration));
+
+        // º¸µå°¡ »ı¼ºµÉ ¶§ °ÔÀÓ ¸Å´ÏÀú¿¡ Ä«µå Ä«¿îÆ® °ªÀ» Àü´Ş
+        GameManager.instance.cardCount = pairCount * 2;
     }
 
     IEnumerator CardAnimation(int[] arr, float flyInDuration)
     {
         List<Vector2> targetPositions = new List<Vector2>();
 
-        for (int i = 0; i < arr.Length; i++) //20 >>arr.Length ëŒ€ì²´
+        for (int i = 0; i < arr.Length; i++)
         {
-            // ì—¬ê¸°ì„œ 5ë¡œ ë‚˜ëˆ ì„œ 4í–‰ 5ì—´ì´ ë˜ëŠ”ë° 4ë¡œ ë‚˜ëˆ„ë©´ 5í–‰ 4ì—´ì´ ë©ë‹ˆë‹¹.
-            float x = (i % 5) * 1.1f - 2.2f;
-            float y = (i / 5) * 1.1f - 3.0f;
+            float x = (i % 4) * 1.1f - 2.1f;
+            float y = (i / 4) * 1.1f - 3.0f;
             targetPositions.Add(new Vector2(x, y));
         }
 
-        Shuffle(targetPositions); // ëª©í‘œ ìœ„ì¹˜ë¥¼ ì„ìŒ
+        Shuffle(targetPositions); // ¸ñÇ¥ À§Ä¡¸¦ ¼¯À½
 
-        for (int i = 0; i < arr.Length; i++) //20 >>arr.Length ëŒ€ì²´
+        for (int i = 0; i < arr.Length; i++)
         {
             GameObject go = Instantiate(card, this.transform);
-            Vector2 targetPos = targetPositions[i]; // ë¬´ì‘ìœ„ ëª©í‘œ ìœ„ì¹˜
 
-            // ì¹´ë“œê°€ í™”ë©´ ë°–ì—ì„œ ì‹œì‘í•˜ê³  ëª©í‘œ ìœ„ì¹˜ë¡œ ë‚ ì•„ì˜¤ëŠ” ì• ë‹ˆë©”ì´ì…˜(ì´ê±´ ì˜ ëª°ë¼ì„œ ê³µë¶€ í•„ìš”í•¨)
+            Vector2 targetPos = targetPositions[i]; // ¹«ÀÛÀ§ ¸ñÇ¥ À§Ä¡
+
+            // Ä«µå°¡ È­¸é ¹Û¿¡¼­ ½ÃÀÛÇÏ°í ¸ñÇ¥ À§Ä¡·Î ³¯¾Æ¿À´Â ¾Ö´Ï¸ŞÀÌ¼Ç(ÀÌ°Ç Àß ¸ô¶ó¼­ °øºÎ ÇÊ¿äÇÔ)
             float elapsedTime = 0f;
             while (elapsedTime < flyInDuration)
             {
@@ -64,13 +89,13 @@ public class Board : MonoBehaviour
                 go.transform.position = Vector2.Lerp(targetPos + new Vector2(Random.Range(-200f, 200f), Random.Range(-300f, 300f)), targetPos, t);
                 yield return null;
             }
+
             go.SetActive(true);
             go.GetComponent<Card>().Setting(arr[i]);
         }
-        GameManager.instance.cardCount=arr.Length;
     }
 
-    // ì„ëŠ” í•¨ìˆ˜
+    // ¼¯´Â ÇÔ¼ö
     void Shuffle<T>(List<T> list)
     {
         int n = list.Count;
@@ -82,26 +107,5 @@ public class Board : MonoBehaviour
             list[i] = list[randomIndex];
             list[randomIndex] = temp;
         }
-    }
-
-    public void Level(int num){    
-
-        int arrLength=6+num; // 6+level 4 = 10
-        
-        int[] arr1= new int[arrLength];
-        int[] arr2= new int[arrLength]; 
-        for(int j=0;j<arrLength;j++){
-            arr1[j]=j; // arr1[10]={0,1,2,3,4,5,6,7,8,9} 
-            //Debug.Log(arr1[j]);           
-            arr2[j]=j; // arr2[10]={0,1,2,3,4,5,6,7,8,9}          
-        }
-        
-        int[] arrBack= arr1.Concat(arr2).ToArray();// arrBack = arr1 + arr2
-        //arrBack[20]={0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9}
-        arrBack = arrBack.OrderBy(x => Random.Range(0f, 1f)).ToArray();// //ë°°ì—´ ì˜¤ë¦„ì°¨ìˆ˜ ëœë¤ì •ë ¬ 
-       
-        // for(int j=0;j<arrBack.Length;j++) Debug.Log(arrBack[j]);       
-          
-        intList=arrBack.ToList(); //ë°°ì—´ì„ ë¦¬ìŠ¤íŠ¸ë¡œ ë§Œë“¬
     }
 }

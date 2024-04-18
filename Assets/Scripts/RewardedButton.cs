@@ -53,7 +53,7 @@ public class RewardedButton : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
         if (adUnitId.Equals(_adUnitId) && showCompletionState.Equals(UnityAdsShowCompletionState.COMPLETED))
         {
             Debug.Log("Unity Ads Rewarded Ad Completed");
-            SceneManager.LoadScene("MainScene");
+            SceneManager.LoadScene("StageScene");
             // Grant a reward.
         }
     }

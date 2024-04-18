@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,9 +12,6 @@ public class Card : MonoBehaviour
     public SpriteRenderer frontImage;
     AudioSource audioSource;
     public AudioClip clip;
-
-    bool isFliped=false;
-        
 
     void Start()
     {
@@ -35,29 +31,34 @@ public class Card : MonoBehaviour
 
     public void OpenCard()
     {
-        if (GameManager.instance.secondCard != null) return;
+        // 이미 열린 카드는 클릭 무시
+        if (anim.GetBool("IsOpen"))
+            return;
 
         audioSource.PlayOneShot(clip);
-        anim.SetBool("IsOpen", true); 
+        anim.SetBool("IsOpen", true);
+        front.SetActive(true);
+        back.SetActive(false);
 
         // 1. firstCard가 비었다면 내 정보를 넘겨준다
         if (GameManager.instance.firstCard == null)
         {
             GameManager.instance.firstCard = this;
-            isFliped=true;
-            Invoke("SingleFlip", 3f); //3초후 카드닫기함수
+            Invoke("CloseCardInvoke", 3f); //3초후 카드닫기함수
         }
         else
         {
+            // 두 번째 카드가 이미 열려있는 경우 무시
+            if (GameManager.instance.secondCard != null && GameManager.instance.secondCard.anim.GetBool("IsOpen"))
+                return;
+
             GameManager.instance.secondCard = this;
             GameManager.instance.Matched();
         }
-
     }
 
     public void DestroyCard()
     {
-        isFliped=false; //매칭후 결과 [SingleFlip()사용]
         Invoke("DestroyCardInvoke", 0.5f);
     }
 
@@ -68,19 +69,19 @@ public class Card : MonoBehaviour
 
     public void CloseCard()
     {
-        isFliped=false; //매칭후 결과 [SingleFlip()사용]
-        Invoke("CloseCardInvoke", 0.8f);        
+        Invoke("CloseCardInvoke", 0.5f);
     }
     void CloseCardInvoke()
-    {          
-        anim.SetBool("IsOpen", true);
-    }
-    void SingleFlip() // 카드닫기함수(3초뒤 발동)
-    {   
-        if(isFliped==true){  // 1장 오픈상태
-            anim.SetBool("IsOpen", true); //카드뒤집기 에니동작
-            GameManager.instance.firstCard = null; //자리비움
-        }
+    {
+        anim.SetBool("IsOpen", false);
+        front.SetActive(false);
+        back.SetActive(true);
+        if(front.activeSelf) //카드가 앞면이라면
+		{
+			front.SetActive(false); //앞면 숨김
+            back.SetActive(true);   //뒷면 보임
+			GameManager.instance.firstCard = null; //첫카드자리 비움
+		}
     }
 
     // hierarchy에 저장돼 있는 카드 뒷면의 색을 변경하는 작업
@@ -88,18 +89,4 @@ public class Card : MonoBehaviour
     {
         back.GetComponent<SpriteRenderer>().color = color;
     }
-
-    public void ChangeCard() //애니메이션으로 호출됨
-    {
-        if(!front.activeSelf){ //뒷면 이면
-            front.SetActive(true); 
-            back.SetActive(false);                              
-        }
-        else //앞면 이면
-        {            
-            front.SetActive(false);
-            back.SetActive(true); 
-        }
-        anim.SetBool("IsOpen", false); //카드뒤집기 에니동작
-    }    
 }
