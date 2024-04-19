@@ -76,12 +76,12 @@ public class Card : MonoBehaviour
         anim.SetBool("IsOpen", false);
         front.SetActive(false);
         back.SetActive(true);
-        if(front.activeSelf) //카드가 앞면이라면
-		{
-			front.SetActive(false); //앞면 숨김
+        if (front.activeSelf) //카드가 앞면이라면
+        {
+            front.SetActive(false); //앞면 숨김
             back.SetActive(true);   //뒷면 보임
-			GameManager.instance.firstCard = null; //첫카드자리 비움
-		}
+            GameManager.instance.firstCard = null; //첫카드자리 비움
+        }
     }
 
     // hierarchy에 저장돼 있는 카드 뒷면의 색을 변경하는 작업

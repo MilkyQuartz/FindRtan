@@ -1,9 +1,10 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class EndScore : MonoBehaviour
 {
+    public Image weName; // 매칭성공시 우리이름
     public Text endTitle; // 성공 실패 텍스트
     public Text endTimeTxt; // 몇초 남았는지
     float timeDate = 0;
@@ -18,16 +19,16 @@ public class EndScore : MonoBehaviour
     public Text totalTxt;
     float totalDate = 0;
     float clearScore = 0;
-    public Text bestScoreTxt; // 베스트 스코어를 표시할 UI Text 요소
+    public Text bestScoreTxt; // 최고점수 텍스트
     public Button retryBtn; // 다시하기 버튼
     public Button nextRoundBtn; // 다음 단계 버튼
+    public Button checkBtn; // 확인 버튼
     float bestScore = 0;
 
     void Start()
     {
-        // PlayerPrefs에서 저장된 난이도 값을 가져옴
+        // 플레이어프리팹스에서 저장된 난이도 값을 가져옴
         int difficulty = PlayerPrefs.GetInt("Difficulty", 1);
-
         timeDate = 30.0f - GameManager.instance.time;
         endTimeTxt.text = timeDate.ToString("N2");
 
@@ -63,56 +64,72 @@ public class EndScore : MonoBehaviour
         if (timeDate >= 0)
         {
             endTitle.text = "성공";
+            weName.gameObject.SetActive(true);
 
-            // 현재 라운드의 클리어 상태를 확인
-            bool isCurrentRoundCleared = PlayerPrefs.GetInt("Round" + difficulty + "Cleared", 0) == 1;
-
-            if (totalDate >= clearScore && !isCurrentRoundCleared)
+            // 다음단계 버튼 활성화 여부 설정
+            bool isNextRoundUnlocked = difficulty < 5;
+            nextRoundBtn.interactable = isNextRoundUnlocked;
+            if (isNextRoundUnlocked)
             {
-                // 클리어 조건을 충족했을 때, 현재 라운드를 클리어 상태로 변경하고 다음 라운드를 해금하고 저장
-                PlayerPrefs.SetInt("Round" + difficulty + "Cleared", 1);
-                int nextDifficulty = difficulty + 1;
-                PlayerPrefs.SetInt("Difficulty", nextDifficulty);
-
-                // 다음 라운드 버튼 활성화 여부 설정
-                bool isNextRoundUnlocked = nextDifficulty <= 5;
-                nextRoundBtn.interactable = isNextRoundUnlocked;
+                nextRoundBtn.onClick.AddListener(NextRoundButtonClicked);
             }
             else
             {
-                retryBtn.onClick.AddListener(RetryGame);
+                nextRoundBtn.gameObject.SetActive(false); // 다음 단계 버튼을 비활성화
+                checkBtn.gameObject.SetActive(true);
+                checkBtn.onClick.AddListener(SaveAndExit);
             }
+            retryBtn.gameObject.SetActive(true);
+            retryBtn.onClick.AddListener(RetryGame);
         }
         else
         {
             timeDate = 0;
             endTitle.text = "실패";
+            weName.gameObject.SetActive(false);
+            retryBtn.gameObject.SetActive(true);
+            retryBtn.onClick.AddListener(RetryGame);
+
+            checkBtn.gameObject.SetActive(true);
+            checkBtn.onClick.AddListener(SaveAndExit);
+            nextRoundBtn.gameObject.SetActive(false); // 다음 단계 버튼을 비활성화
         }
     }
 
-    void RetryGame()
+    public void SaveAndExit()
     {
-        SceneManager.LoadScene("MainScene");
+        // 현재 난이도
+        int currentDifficulty = PlayerPrefs.GetInt("Difficulty", 1);
+
+        // 클리어한 내용을 플레이어프리팹스에 저장
+        PlayerPrefs.SetInt("Round" + currentDifficulty + "Cleared", 1); // 현재 난이도의 클리어 상태를 true로 설정
+        PlayerPrefs.SetInt("GameCleared", 1);
+
+        // 스테이지 씬으로 이동
+        SceneManager.LoadScene("StageScene");
     }
 
-    public void NextRound()
+    public void RetryGame()
     {
-        // 현재 난이도를 가져옴
-        int difficulty = PlayerPrefs.GetInt("Difficulty", 1);
+        // 현재 난이도
+        int currentDifficulty = PlayerPrefs.GetInt("Difficulty", 1);
 
+        // 다시하기를 누르면 난이도를 감소시킴 왜냐면 게임매니저에서 짝 다맞추면 자동으로 난이도 +1시켜서 근데 이건 성공하면 다시하기 버튼을 빼서 필요없는 코드가 됐다. 
+        int previousDifficulty = currentDifficulty - 1;
+        if (previousDifficulty >= 1) 
+        {
+            PlayerPrefs.SetInt("Difficulty", previousDifficulty);
+            PlayerPrefs.SetInt("Round" + currentDifficulty + "Cleared", 0); // 현재 난이도의 클리어 상태를 false로 설정
+            PlayerPrefs.SetInt("GameCleared", 0);
+            SceneManager.LoadScene("MainScene");
+        }
+    }
+
+    public void NextRoundButtonClicked()
+    {
+        int currentDifficulty = PlayerPrefs.GetInt("Difficulty", 1);
         // 현재 클리어한 난이도의 다음 난이도를 확인
-        int nextDifficulty = difficulty + 1;
-
-        // 다음 단계가 해금되어 있는지 확인
-        bool isNextRoundUnlocked = PlayerPrefs.GetInt("Round" + nextDifficulty + "Cleared", 0) == 1;
-        if (isNextRoundUnlocked)
-        {
-            PlayerPrefs.SetInt("Difficulty", nextDifficulty);
-            SceneManager.LoadScene("MainScene");
-        }
-        else
-        {
-            SceneManager.LoadScene("MainScene");
-        }
+        int nextDifficulty = currentDifficulty + 1;
+        SceneManager.LoadScene("MainScene");
     }
 }

@@ -7,6 +7,7 @@ using System.Linq;
 public class Board : MonoBehaviour
 {
     public GameObject card;
+    int arrX = 0;
 
     void Start()
     {
@@ -18,27 +19,34 @@ public class Board : MonoBehaviour
     public void GenerateCards(int difficulty)
     {
         int pairCount = 0;
+       
 
         // 난이도에 따라 숫자 쌍의 개수를 결정
         switch (difficulty)
         {
             case 1:
                 pairCount = 3;
+                arrX = 3; // 예쁘게 배치하기
                 break;
             case 2:
                 pairCount = 5;
+                arrX = 5;
                 break;
             case 3:
                 pairCount = 7;
+                arrX = 4;
                 break;
             case 4:
                 pairCount = 8;
+                arrX = 4;
                 break;
             case 5:
                 pairCount = 10;
+                arrX = 5;
                 break;
             default:
                 pairCount = 3;
+                arrX = 3;
                 break;
         }
 
@@ -67,8 +75,8 @@ public class Board : MonoBehaviour
 
         for (int i = 0; i < arr.Length; i++)
         {
-            float x = (i % 4) * 1.1f - 2.1f;
-            float y = (i / 4) * 1.1f - 3.0f;
+            float x = (i % arrX) * (4.4f / (arrX - 1)) - 2.2f;
+            float y = (i / arrX) * (5.4f / (arrX - 1)) - 3.2f;
             targetPositions.Add(new Vector2(x, y));
         }
 
