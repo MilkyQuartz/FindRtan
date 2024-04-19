@@ -3,7 +3,19 @@ guid: f1dde2ac85f91fd4faddbf91447541d5
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - playerPrefab: {fileID: 8258032110777723333, guid: 137e8020d5e0711489ac09a910cd8811, type: 3}
+  - firstCard: {instanceID: 0}
+  - secondCard: {instanceID: 0}
+  - timeTxt: {instanceID: 0}
+  - endPanel: {instanceID: 0}
+  - tryTxt: {instanceID: 0}
+  - falseTryTxt: {instanceID: 0}
+  - clip: {instanceID: 0}
+  - clip2: {instanceID: 0}
+  - clip3: {instanceID: 0}
+  - thirdCard: {instanceID: 0}
+  - fourthCard: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -14,6 +14,7 @@ public class StartBtn : MonoBehaviour
     {
         startBtn = GetComponent<Button>();
         startBtnTxt = startBtn.GetComponentInChildren<Text>();
+        PlayerPrefs.DeleteAll();
     }
 
     public void StartGame()
